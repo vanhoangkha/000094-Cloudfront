@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Storage Immersion Day - DataSync Workshop - NFS Migration - In-Cloud Region
+
+Resources:
+  # We use the GUID from the ARN of the stack ID to generate
+  # a unique bucket name
+  SidBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+      BucketName: !Join
+      - "-"
+      - - "sid-datasync"
+        - !Select
+          - 2
+          - !Split
+            - "/"
+            - !Ref "AWS::StackId"
+
+  # Give the role a friendly name as the workshop user will need to
+  # reference it when creating DataSync tasks.
+  SidBucketIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - datasync.amazonaws.com
+        Version: '2012-10-17'
+  SidBucketRolePolicy:
+    Type: AWS::IAM::Policy
+    # DependsOn: SidBucket
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Resource: !GetAtt SidBucket.Arn
+            Action:
+              - s3:GetBucketLocation
+              - s3:ListBucket
+              - s3:ListBucketMultipartUploads
+              - s3:HeadBucket
+          - Effect: Allow
+            Resource: !Join [ "/", [ !GetAtt SidBucket.Arn, "*" ] ]
+            Action:
+              - s3:AbortMultipartUpload
+              - s3:DeleteObject
+              - s3:GetObject
+              - s3:ListMultipartUploadParts
+              - s3:PutObject
+        Version: '2012-10-17'
+      PolicyName: policy
+      Roles:
+        - !Ref 'SidBucketIamRole'
+
+Outputs:
+  S3BucketName:
+    Description: S3 Bucket Name
+    Value: !Ref 'SidBucket'
+  BucketRoleForDataSync:
+    Description: S3 Bucket Role for DataSync
+    Value: !Ref 'SidBucketIamRole'

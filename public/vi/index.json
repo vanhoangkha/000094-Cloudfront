@@ -1,0 +1,50 @@
+[
+{
+	"uri": "/vi/",
+	"title": "CloudFront với S3",
+	"tags": [],
+	"description": "",
+	"content": "CLOUDFRONT VỚI S3 Giới thiệu Bài lab này sẽ hướng dẫn bạn các bước để lưu trữ nội dung web tĩnh trong Amazon S3 bucket , được bảo vệ và tăng tốc bởi Amazon CloudFront . Các kỹ năng học được sẽ giúp bạn đảm bảo khối lượng công việc của mình phù hợp với AWS Well-Architected Framework.\nĐiều kiện cần thiết   Tài khoản AWS account mà bạn sử dụng cho bài Lab.\n  Tạo quyền IAM với Amazon S3 và Amazon CloudFront.\n  Chi phí  Thường ít hơn $ 1 mỗi tháng (tùy thuộc vào số lượng yêu cầu) Giá Amazon S3 Giá Amazon CloudFront Giá Amazon  Steps:  Tạo nhóm S3 Tải lên tệp index.html Cấu hình Amazon CloudFront Dọn dẹp tài nguyên  Tài liệu tham khảo Amazon S3 \u0026amp; Amazon CloudFront \n"
+},
+{
+	"uri": "/vi/1.1-t%E1%BA%A1o-nh%C3%B3m-s3/",
+	"title": "Tạo S3 bucket",
+	"tags": [],
+	"description": "",
+	"content": "Tạo Amazon S3 để lưu trữ nội dung tĩnh bằng bảng điều khiển Amazon S3. Để biết thêm thông tin về Amazon S3 .\n Mở trang Amazon S3 console at https://console.aws.amazon.com/s3/. Từ console , chọn nút Create bucket.    Tại mục Bucket name: điền doc-example-bucket-111\n  Tại mục AWS Region: chọn Asia Pacific (Singapore)ap-southeast-1\n  Đặt tên cho Bucket name của bạn, nhập tên và tuân thủ quy định dưới dây cho Bucket. Thực hiện theo các nguyên tắc đặt tên sau:   Tên phải là duy nhất trên tất cả các Bucket hiện có trong Amazon S3. Tên không được chứa các ký tự viết hoa. Tên phải bắt đầu bằng chữ thường hoặc số. Tên phải dài từ 3 đến 63 ký tự.   Chọn Region gần bạn để giảm thiểu độ trễ và chi phí, hoặc để giải quyết các yêu cầu quy định. Lưu ý rằng đối với ví dụ này, chúng ta sẽ chấp nhận cài đặt mặc định và Bucket này được bảo mật theo mặc định. Xem xét bật các tùy chọn bảo mật bổ sung như ghi nhật ký và mã hóa, Bảo vệ dữ liệu trong Amazon S3 .\n  Ở ví dụ này,\n   Chúng ta giữ nguyên mặc định Block all public access  Tại mục bucket versioning   Enable bucket versioning , để giữ nhiều phiên bản của objects để bạn có thể khôi phục object nếu bạn vô tình sửa đổi hoặc xóa nó. Chọn Create bucket  "
+},
+{
+	"uri": "/vi/1.2-t%E1%BA%A3i-l%C3%AAn-t%E1%BB%87p-index.html/",
+	"title": "Tải lên file INDEX.HTML",
+	"tags": [],
+	"description": "",
+	"content": " Tạo một tệp index.html đơn giản, bạn có thể tạo bằng cách sao chép đoạn code dưới đây vào Notepad và lưu lại dưới dạng html  \u0026lt;!DOCTYPE html\u0026gt; \u0026lt;html\u0026gt; \u0026lt;head\u0026gt; \u0026lt;title\u0026gt;Example\u0026lt;/title\u0026gt; \u0026lt;/head\u0026gt; \u0026lt;body\u0026gt; \u0026lt;h1\u0026gt;THE FIRST CLOUD JOURNEY\u0026lt;/h1\u0026gt; \u0026lt;p\u0026gt;FCJ.\u0026lt;/p\u0026gt; \u0026lt;/body\u0026gt; \u0026lt;/html\u0026gt; Mở bảng điều khiển Amazon S3 tại https://console.aws.amazon.com/s3/. Tại console, hãy nhấp vào tên của Bucket mà bạn vừa tạo.  Chọn Upload  Bắt đầu Add files   Chọn Add files, chọn tệp index.html tại nơi mà bạn đang chứa file. Sau đó chọn Upload.  Tệp index.html của bạn bây giờ sẽ xuất hiện trong S3 Bucket  Bấm chọn vào file vừa upload thành công chọn Open  Kiểm tra thời gian browser loading index.html   Kiểm tra trên thanh browser, xuất hiện đúng region Singapore (ap-southeast-1) Nhấp chuột phải, chọn kiểm tra Bên phải trang, chọn Mạng Nhấn ký hiệu tải lại trang Take note thời gian tải trang html (sẽ dùng để so sánh khi triển khai với Cloudfront)  "
+},
+{
+	"uri": "/vi/1.3-c%E1%BA%A5u-h%C3%ACnh-amazon-cloudfront/",
+	"title": "Cấu hình Amazon CloudFront",
+	"tags": [],
+	"description": "",
+	"content": "Sử dụng Bảng điều khiển quản lý AWS, để tạo CloudFront distribution và cấu hình nó để phục vụ s3 Bucket mà chúng ta đã tạo trước đó.\n Mở bảng điều khiển Amazon CloudFront tại https://console.aws.amazon.com/cloudfront/home. Từ bảng điều khiển, nhấn vào Create distribution.  Chỉ định các cài đặt sau đây cho bản distribution:   Trong trường Origin domain, chọn S3 bucket mà bạn đã tạo trước đó. Trong trường Origin access, chọn Legacy access identities Trong trường Bucket policy, chọn Yes, update the bucket policy Chọn Create new OAI   Chọn Create   Các phần còn lại, để mặc định.  Trong phần Settings   Chọn Use North America, Europe, Asia, Middle East, and Africa vì Việt Nam trong khu vực Asia Trọng mục Default root object - optional, điền tên file đã upload lên S3 - vào ô trống (VD: index.html) Cuộn xuống cuối trang, chọn Create distribution    Để quay lại trang CloudFront chọn Distributions từ menu điều hướng bên trái.\n  Để biết thêm thông tin về các tùy chọn cấu hình khác, xem thêm CloudFront Web Distribution.\n  Sau khi CloudFront tạo bản phân phối của bạn, có thể mất khoảng vài phút.   Cột Status \u0026amp; cột Last modified sẽ có thông tin như bên dưới hình. Nhấp vào ID để lấy Distribution domain name  Khi bản phân phối của bạn được triển khai, hãy kiểm tra nội dung tĩnh (index.html) của mình bằng CloudFront Distribution domain name mà bạn có thể thấy trong console. Sao chép domain name vào browser để kiểm tra.  Kết quả được như hình bên dưới\nĐể biết thêm thông tin, xem thêm Testing Web Distribution.\nKiểm tra thời gian browser tải index.html bằng Distribution domain name của CloudFront   Nhấp chuột phải, chọn kiểm tra Bên phải trang, chọn Mạng Nhấn ký hiệu tải lại trang   Thời gian từ 389 mili second (khi xem file html qua S3-Object URL) đã giảm còn 8 mili second nhờ truy cập qua CloudFront! Hãy thử tưởng tưởng: web tĩnh của bạn được host tại các Region US \u0026amp; có end user tại khu vực Asian, thì thời gian trả về kết quả sau 1 cú lích chuột có thể lên tới vài giây hoặc chục giây, điều đó - sẽ làm ảnh hưởng đến trãi nghiệm người dùng! Nhưng với CloudFront tốc độ sẽ luôn được tối ưu.  Kiểm tra địa điểm của CloudFront Pop (Points of Presence)   Nhấp 1 lần vào domain name ở giữa trang Kiểm tra POP của Cloudfront, vì mình đang truy cập ở Hồ Chi Minh - nên POP là: SGN50-P1 (với SGN là Saigon)  Giờ đây, bạn có nội dung trong S3 bucket private mà chỉ CloudFront mới có quyền truy cập an toàn. Sau đó, CloudFront phục vụ các yêu cầu, trở thành một dịch vụ lưu trữ tĩnh an toàn, đáng tin cậy một cách hiệu quả với các tính năng như custom certificates và alternate domain names .  Để biết thêm thông tin về cách cấu hình CloudFront, update CloudFront Distribution .\n"
+},
+{
+	"uri": "/vi/1.4-d%E1%BB%8Dn-d%E1%BA%B9p-t%C3%A0i-nguy%C3%AAn/",
+	"title": "Dọn dẹp tài nguyên",
+	"tags": [],
+	"description": "",
+	"content": "Các hướng dẫn sau, sẽ xóa CloudFront distribution và S3 bucket được tạo trong bài Lab này.\nXóa CloudFront distribution:  Mở bảng điều khiển Amazon CloudFront tại (https://console.aws.amazon.com/cloudfront/home). Từ bảng điều khiển bảng điều khiển, chọn distribution mà bạn đã tạo trước đó, chọn Disable. Để xác nhận, chọn Disable. Sau khoảng 15 phút khi trạng thái Disabled, chọn distribution và chọn Delete,và để xác nhận chọn Delete.  Xóa S3 Bucket:  Mở bảng điều khiển Amazon S3 tại https://console.aws.amazon.com/s3/. Chọn Bucket bạn đã tạo trước đó, sau đó nhấp vào Empty từ thanh menu. Xác nhận bucket của bạn đã empty. Khi Bucket trống, sau đó nhấp vào Delete từ thanh menu. Xác nhận Bucket bạn đã xóa.  "
+},
+{
+	"uri": "/vi/categories/",
+	"title": "Categories",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "/vi/tags/",
+	"title": "Tags",
+	"tags": [],
+	"description": "",
+	"content": ""
+}]

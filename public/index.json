@@ -1,0 +1,50 @@
+[
+{
+	"uri": "/",
+	"title": "CLOUDFRONT WITH S3 BUCKET ORIGIN",
+	"tags": [],
+	"description": "",
+	"content": "CLOUDFRONT WITH S3 BUCKET ORIGIN Introduction This hands-on lab will guide you through the steps to host static web content in an Amazon S3 bucket , protected and accelerated by Amazon CloudFront . Skills learned will help you secure your workloads in alignment with the AWS Well-Architected Framework.\nPrerequisites   An AWS account that you are able to use for testing.\n  Permissions to Amazon S3 and Amazon CloudFront.\n  Costs  Typically less than $1 per month (depending on the number of requests) if the account is only used for personal testing or training, and the tear down is not performed. Amazon S3 pricing Amazon CloudFront pricing AWS Pricing  Steps:  Create S3 bucket Upload example index.html file Configure Amazon CloudFront Tear down  References \u0026amp; useful resources Amazon S3 Developer Guide Amazon CloudFront Developer Guide\n"
+},
+{
+	"uri": "/1.1-t%E1%BA%A1o-nh%C3%B3m-s3/",
+	"title": "Create S3 bucket",
+	"tags": [],
+	"description": "",
+	"content": "Create an Amazon S3 bucket to host static content using the Amazon S3 console. For more information about Amazon S3, see Introduction to Amazon S3 .\n Open the Amazon S3 console at https://console.aws.amazon.com/s3/ . From the console dashboard, choose Create bucket.    In the Bucket name: input doc-example-bucket-111\n  In the AWS Region: choose Asia Pacific (Singapore)ap-southeast-1   Enter a Bucket name for your bucket, type a unique DNS-compliant name for your new bucket. Follow these naming guidelines:   The name must be unique across all existing bucket names in Amazon S3. The name must not contain uppercase characters. The name must start with a lowercase letter or number. The name must be between 3 and 63 characters long.   Choose an AWS Region where you want the bucket to reside. Choose a Region close to you to minimize latency and costs, or to address regulatory requirements. Note that for this example we will accept the default settings and this bucket is secure by default. Consider enabling additional security options such as logging and encryption, the S3 documentation has additional information such as Protecting Data in Amazon S3 .\n  In this lab,\n   Keep default Block all public access  In the bicket versioning   Enable bucket versioning , to keep multiple versions of an object so you can recover an object if you unintentionally modify or delete it. Click Create bucket.  "
+},
+{
+	"uri": "/1.2-t%E1%BA%A3i-l%C3%AAn-t%E1%BB%87p-index.html/",
+	"title": "Upload example index.html file",
+	"tags": [],
+	"description": "",
+	"content": " Create a simple index.html file, you can create by coping the following text into your favourite text editor.  \u0026lt;!DOCTYPE html\u0026gt; \u0026lt;html\u0026gt; \u0026lt;head\u0026gt; \u0026lt;title\u0026gt;Example\u0026lt;/title\u0026gt; \u0026lt;/head\u0026gt; \u0026lt;body\u0026gt; \u0026lt;h1\u0026gt;THE FIRST CLOUD JOURNEY\u0026lt;/h1\u0026gt; \u0026lt;p\u0026gt;FCJ.\u0026lt;/p\u0026gt; \u0026lt;/body\u0026gt; \u0026lt;/html\u0026gt; Open the Amazon S3 console at https://console.aws.amazon.com/s3/ . In the console click the name of your bucket you just created.  Click the Upload button.  Star to Add files   Click the Add files button, select your index.html file. then click the Upload button.  Your index.html file should now appear in the list.  Tick on the file already upload success, choose Open  Check the period of time for brower loading index.html   Check in the brower has correct Singapore (ap-southeast-1) Lick rightmost button , choose Inspect On the right, choose \u0026raquo; and choose Network Lick the icon reload page Take note the period of time to the reload page (will use to compare when deploy cloudfront)  "
+},
+{
+	"uri": "/1.3-c%E1%BA%A5u-h%C3%ACnh-amazon-cloudfront/",
+	"title": "Configure Amazon CloudFront",
+	"tags": [],
+	"description": "",
+	"content": "Using the AWS Management Console, we will create a CloudFront distribution, and configure it to serve the S3 bucket we previously created.\n Open the Amazon CloudFront console at https://console.aws.amazon.com/cloudfront/home . From the console dashboard, click Create distribution.  Specify the following settings for the distribution:   In the Origin domain field Select the S3 bucket you created previously. In the Origin access, choose Legacy access identities In the Bucket policy, choose Yes, update the bucket policy Choose Create new OAI   Choose Create   Another field, let it default  In the Settings   Choose Use North America, Europe, Asia, Middle East, and Africa because, Vietnam in Asia In the Default root object - optional, input file already upload on S3 (Fx: index.html) Scroll down last page, choose Create distribution    To return to the main CloudFront page click Distributions from the left navigation menu.\n  For more information on the other configuration options, see Values That You Specify When You Create or Update a Web Distribution in the CloudFront documentation.\n  After CloudFront creates your distribution which may take approximately a few minutes   Column Status \u0026amp; Column Last modified has infomation like below. Lick on ID to get Distribution domain name  When your distribution is deployed, confirm that you can access your content using your new CloudFront Distribution domain name which you can see in the console. Copy the Domain Name into a web browser to test.  Result like below\nFor more information, see Testing a Web Distribution in the CloudFront documentation.\nCheck the period of time for brower loading index.html by Distribution domain name of CloudFront   Lick rightmost button , choose Inspect On the right, choose \u0026raquo; and choose Network Lick the icon reload page   Time from 110 milliseconds (when viewing html files via S3-Object URL) has been reduced to 9 milliseconds by to access via CloudFront! Imagine: your static web is hosted in Region US \u0026amp; has end user in Asian, the time to return results after 1 mouse click can be up to a few seconds or tens of seconds, that - will affect the user experience! But with CloudFront speed will always be optimal.  Check the location of CloudFront Pop(Points of Presence)   Click one time in domain name central page Check POP - Cloudfront, i request from Ho Chi Minh - so POP is: SGN50-P1 (with SGN is Saigon)  You now have content in a private S3 bucket, that only CloudFront has secure access to. CloudFront then serves the requests, effectively becoming a secure, reliable static hosting service with additional features available such as custom certificates and alternate domain names .  For more information on configuring CloudFront, see Viewing and Updating CloudFront Distributions in the CloudFront documentation.\n"
+},
+{
+	"uri": "/1.4-d%E1%BB%8Dn-d%E1%BA%B9p-t%C3%A0i-nguy%C3%AAn/",
+	"title": "Tear Down",
+	"tags": [],
+	"description": "",
+	"content": "The following instructions will remove the CloudFront distribution and S3 bucket created in this lab.\nDelete the CloudFront distribution:\n Open the Amazon CloudFront console at (https://console.aws.amazon.com/cloudfront/home). From the console dashboard, select the distribution you created earlier and click the Disable button. To confirm, click the Disable button. After approximately 15 minutes when the status is Disabled, select the distribution and click the Delete button, and then to confirm click the Delete button.  Delete the S3 bucket:\n Open the Amazon S3 console at https://console.aws.amazon.com/s3/ . Check the box next to the bucket you created previously, then click Empty from the menu. Confirm the bucket you are emptying. Once the bucket is empty check the box next to the bucket, then click Delete from the menu. Confirm the bucket you are deleting.  "
+},
+{
+	"uri": "/categories/",
+	"title": "Categories",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "/tags/",
+	"title": "Tags",
+	"tags": [],
+	"description": "",
+	"content": ""
+}]
