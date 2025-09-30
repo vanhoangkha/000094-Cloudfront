@@ -1,2 +1,1 @@
-# how-to-write-a-lab-guide
-Cre: Sư huynh Minh Lê
+# 000094-Cloudfront Workshop
